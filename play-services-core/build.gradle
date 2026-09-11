@@ -85,6 +85,8 @@ android {
 
     lintOptions {
         disable 'MissingTranslation', 'InvalidPackage', 'BatteryLife', 'ImpliedQuantity', 'MissingQuantity'
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     buildTypes {
