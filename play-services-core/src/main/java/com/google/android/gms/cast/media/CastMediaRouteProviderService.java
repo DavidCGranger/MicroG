@@ -26,6 +26,8 @@ public class CastMediaRouteProviderService extends MediaRouteProviderService {
 
     @Override
     public MediaRouteProvider onCreateMediaRouteProvider() {
+        // Cast devices are found through network service discovery (NsdManager), from Android 4.1.
+        if (android.os.Build.VERSION.SDK_INT < 16) return null;
         return new CastMediaRouteProvider(this);
     }
 }

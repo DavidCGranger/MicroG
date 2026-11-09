@@ -28,7 +28,6 @@ import org.microg.safeparcel.AutoSafeParcelable;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class LogEventParcelable extends AutoSafeParcelable {
@@ -109,7 +108,7 @@ public class LogEventParcelable extends AutoSafeParcelable {
     private String getBytesAsString() {
         if (bytes == null) return "null";
         try {
-            CharsetDecoder d = StandardCharsets.US_ASCII.newDecoder();
+            CharsetDecoder d = java.nio.charset.Charset.forName("US-ASCII").newDecoder();
             CharBuffer r = d.decode(ByteBuffer.wrap(bytes));
             return r.toString();
         } catch (Exception e) {

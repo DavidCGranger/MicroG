@@ -113,10 +113,14 @@ object SettingsContract {
 
     @JvmStatic
     fun <T> getSettings(context: Context, uri: Uri, projection: Array<out String>?, f: (Cursor) -> T): T = withoutCallingIdentity {
-        context.contentResolver.query(uri, projection, null, null, null).use { c ->
-            require(c != null) { "Cursor for query $uri ${projection?.toList()} was null" }
+        // Closed by hand: Cursor is Closeable (for use {}) only from Android 4.1 on.
+        val c = context.contentResolver.query(uri, projection, null, null, null)
+        require(c != null) { "Cursor for query $uri ${projection?.toList()} was null" }
+        try {
             if (!c.moveToFirst()) error("Cursor for query $uri ${projection?.toList()} was empty")
             f.invoke(c)
+        } finally {
+            c.close()
         }
     }
 

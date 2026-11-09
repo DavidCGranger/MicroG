@@ -53,8 +53,13 @@ fun Context.hideIcon(hide: Boolean) {
 
 val Context.systemAnimationsEnabled: Boolean
     get() {
-        val duration: Float = Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
-        val transition: Float = Settings.Global.getFloat(contentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE, 1f)
+        // Settings.Global from Android 4.2; before, the same values are in Settings.System.
+        @Suppress("DEPRECATION")
+        val duration: Float = if (Build.VERSION.SDK_INT >= 17) Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
+            else Settings.System.getFloat(contentResolver, Settings.System.ANIMATOR_DURATION_SCALE, 1f)
+        @Suppress("DEPRECATION")
+        val transition: Float = if (Build.VERSION.SDK_INT >= 17) Settings.Global.getFloat(contentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE, 1f)
+            else Settings.System.getFloat(contentResolver, Settings.System.TRANSITION_ANIMATION_SCALE, 1f)
 
         return duration != 0f && transition != 0f
     }

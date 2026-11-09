@@ -10,6 +10,11 @@ This fork fixes login on old versions of YouTube Vanced.
 Current pre-releases also integrate support for older versions of Android. 
 Credits go to https://gist.github.com/Smu1zel/b55551cab92141f13f5590b8c84ffefc!
 
+It runs on Android 4.0.3 (API 15) and later, Cast device discovery from Android 4.1. Before
+Android 10, its own connections (sign-in, check-in, push) use TLS 1.3 through the bundled
+Conscrypt, which also is what apps get from its ProviderInstaller. The Cronet module (Chromium's
+network stack for apps, version 91) is not included.
+
 This fork will likely do ABSOLUTELY NOTHING for you. YouTube Vanced no longer works. The API has been shut down.
 
 # Vanced MicroG

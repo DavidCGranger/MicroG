@@ -68,13 +68,13 @@ object ProfileManager {
             PROFILE_AUTO -> false
             PROFILE_REAL -> false
             PROFILE_NATIVE -> true
-            else -> getProfileXml(context, profile)?.use {
+            else -> getProfileXml(context, profile)?.closing {
                 var next = it.next()
                 while (next != XmlPullParser.END_DOCUMENT) {
                     when (next) {
                         XmlPullParser.START_TAG -> when (it.name) {
                             "profile" -> {
-                                return@use it.getAttributeBooleanValue(null, "auto", false)
+                                return@closing it.getAttributeBooleanValue(null, "auto", false)
                             }
                         }
                     }
@@ -91,7 +91,7 @@ object ProfileManager {
             if (profileResId == 0) return realData
             val resultData = mutableMapOf<String, String>()
             resultData.putAll(realData)
-            getProfileXml(context, profile)?.use {
+            getProfileXml(context, profile)?.closing {
                 var next = it.next()
                 while (next != XmlPullParser.END_DOCUMENT) {
                     when (next) {
@@ -152,7 +152,7 @@ object ProfileManager {
 
         // From profile
         try {
-            getProfileXml(context, profile)?.use {
+            getProfileXml(context, profile)?.closing {
                 var next = it.next()
                 while (next != XmlPullParser.END_DOCUMENT) {
                     when (next) {
@@ -275,13 +275,13 @@ object ProfileManager {
 
     fun getProfileName(context: Context, profile: String): String? = getProfileName { getProfileXml(context, profile) }
 
-    private fun getProfileName(parserCreator: () -> XmlResourceParser?): String? = parserCreator()?.use {
+    private fun getProfileName(parserCreator: () -> XmlResourceParser?): String? = parserCreator()?.closing {
         var next = it.next()
         while (next != XmlPullParser.END_DOCUMENT) {
             when (next) {
                 XmlPullParser.START_TAG -> when (it.name) {
                     "profile" -> {
-                        return@use it.getAttributeValue(null, "name")
+                        return@closing it.getAttributeValue(null, "name")
                     }
                 }
             }
@@ -324,6 +324,18 @@ object ProfileManager {
             } catch (e: Exception) {
                 Log.w(TAG, e)
             }
+        }
+    }
+
+    /**
+     * Runs block with the parser and closes it, like use {}: XmlResourceParser is AutoCloseable
+     * only from Android 4.4 on, and before that use {} fails for lack of AutoCloseable.
+     */
+    private inline fun <R> XmlResourceParser.closing(block: (XmlResourceParser) -> R): R {
+        try {
+            return block(this)
+        } finally {
+            close()
         }
     }
 }

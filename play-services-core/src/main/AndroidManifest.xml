@@ -81,6 +81,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
+        android:name="org.microg.gms.MicroGApplication"
         android:allowBackup="true"
         android:extractNativeLibs="true"
         android:forceQueryable="true"

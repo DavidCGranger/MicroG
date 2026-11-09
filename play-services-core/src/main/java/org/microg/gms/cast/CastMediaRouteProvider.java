@@ -36,13 +36,16 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 
 import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CastMediaRouteProvider extends MediaRouteProvider {
+    /** UTF-8 (StandardCharsets needs Android 4.4). */
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+
     private static final String TAG = CastMediaRouteProvider.class.getSimpleName();
 
     private final Map<String, CastDevice> castDevices = new HashMap<>();
@@ -205,12 +208,12 @@ public class CastMediaRouteProvider extends MediaRouteProvider {
                             return;
                         }
                         try {
-                            String id = new String(attributes.get("id"), StandardCharsets.UTF_8);
-                            String deviceVersion = new String(attributes.get("ve"), StandardCharsets.UTF_8);
-                            String friendlyName = new String(attributes.get("fn"), StandardCharsets.UTF_8);
-                            String modelName = new String(attributes.get("md"), StandardCharsets.UTF_8);
-                            String iconPath = new String(attributes.get("ic"), StandardCharsets.UTF_8);
-                            int status = Integer.parseInt(new String(attributes.get("st"), StandardCharsets.UTF_8));
+                            String id = new String(attributes.get("id"), UTF_8);
+                            String deviceVersion = new String(attributes.get("ve"), UTF_8);
+                            String friendlyName = new String(attributes.get("fn"), UTF_8);
+                            String modelName = new String(attributes.get("md"), UTF_8);
+                            String iconPath = new String(attributes.get("ic"), UTF_8);
+                            int status = Integer.parseInt(new String(attributes.get("st"), UTF_8));
 
                             onChromeCastDiscovered(id, name, host, port, deviceVersion, friendlyName, modelName, iconPath, status);
                         } catch (NullPointerException ex) {
