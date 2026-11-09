@@ -24,9 +24,9 @@ allprojects {
     apply plugin: 'idea'
 
     group = 'org.microg.gms'
-    version = "0.2.24.260216"
-    ext.appVersionCode = 260216001
-    ext.isReleaseVersion = false
+    version = "0.2.24.261109"
+    ext.appVersionCode = 261109001
+    ext.isReleaseVersion = true
 
     configurations.all {
         resolutionStrategy {

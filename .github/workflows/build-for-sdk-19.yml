@@ -1,4 +1,4 @@
-name: SDK 19 APK Builder
+name: MicroG APK Builder
 
 on:
   workflow_dispatch:
@@ -24,9 +24,12 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # The default ("tools platform-tools") fails: the SDK has no "tools" package any more.
+          packages: platform-tools
 
       - name: Accept Android licenses
-        run: sdkmanager --licenses
+        run: yes | sdkmanager --licenses >/dev/null
 
       - name: Install NDK 21.0.6113669
         run: echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;21.0.6113669"
