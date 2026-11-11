@@ -23,16 +23,21 @@ jobs:
           java-version: 17
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          # The default ("tools platform-tools") fails: the SDK has no "tools" package any more.
-          packages: platform-tools
-
-      - name: Accept Android licenses
-        run: yes | sdkmanager --licenses >/dev/null
+        run: |
+          set -e
+          export ANDROID_HOME=$HOME/android-sdk
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          curl -fsSL -o /tmp/cmdline.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q /tmp/cmdline.zip -d /tmp/cmdline
+          mv /tmp/cmdline/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses >/dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
 
       - name: Install NDK 21.0.6113669
-        run: echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;21.0.6113669"
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;21.0.6113669" >/dev/null || true
 
       - name: Grant execute permissions
         run: chmod +x ./gradlew
@@ -47,7 +52,7 @@ jobs:
         run: ./gradlew assembleRelease
 
       - name: Upload APKs
-        uses: actions/upload-artifact@v4
+        uses: https://data.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: MicroG-APKs
           path: |
